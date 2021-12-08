@@ -1,5 +1,6 @@
 const uploadForm = document.getElementById("upload-form");
 const csvFile = document.getElementById("csv-file");
+const countsObj = {};
 
 function csvToArray(str, delimiter = ",") {
   // slice from start of text to the first \n index
@@ -26,6 +27,20 @@ function csvToArray(str, delimiter = ",") {
   return resultsArray;
 }
 
+function getWordCount(array) {
+  for (const query of array) {
+    if (countsObj.hasOwnProperty(query.query)) {
+      countsObj[query.query].counts++;
+    } else {
+      countsObj[query.query] = {
+        counts: 1,
+        hits: query.hits,
+      };
+    }
+  }
+  return countsObj;
+}
+
 uploadForm.addEventListener("submit", function (event) {
   // prevents the default behavior of the page refreshing
   event.preventDefault();
@@ -41,7 +56,10 @@ uploadForm.addEventListener("submit", function (event) {
   reader.onload = function (event) {
     const text = event.target.result;
     const data = csvToArray(text);
-    document.write(JSON.stringify(data)); // The CSV content as string
+    //document.write(JSON.stringify(data));
+    // console.log(Object.keys(data));
+    const resultsObj = getWordCount(data);
+    console.log(resultsObj);
   };
 
   reader.readAsText(input);
