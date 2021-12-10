@@ -4,7 +4,8 @@ const tableEl = document.getElementById("table");
 const noHitsObj = {};
 const hitsObj = {};
 
-function csvToArray(str, delimiter = ",") {
+function csvToArray(str) {
+  const delimiter = ","
   // slice from start of text to the first \n index
   // use split to create an array from string to delimiter
   const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
@@ -55,8 +56,10 @@ function getWordCount(array) {
 
 function displayTable(data) {
   console.log(data);
+  
+  // console.log(Object.entries(data).map(([key, value]) => key + ":" + value));
+
   let tHeadEl = tableEl.createTHead();
-  // let row = tableEl.insertRow();
   let th1 = document.createElement("th");
   let th1Text = document.createTextNode("Query");
   let th2 = document.createElement("th");
@@ -67,19 +70,17 @@ function displayTable(data) {
   tHeadEl.appendChild(th1);
   tHeadEl.appendChild(th2);
 
-  // console.log(Object.keys(data))
-
   for (const value in data) {
-    let tr = document.createElement("tr");
-    let td1 = document.createElement("td");
-    let td2 = document.createElement("td");
+    let row = tableEl.insertRow();
+    let data1 = document.createElement("td");
+    let data2 = document.createElement("td");
     let query = document.createTextNode(value);
-    let counts = document.createTextNode("1");
-    td1.appendChild(query);
-    td2.appendChild(counts);
-    tr.appendChild(td1);
-    tr.appendChild(td2);
-    tHeadEl.appendChild(tr);
+    let counts = document.createTextNode(data[value].counts);
+    data1.appendChild(query);
+    data2.appendChild(counts);
+    row.appendChild(data1);
+    row.appendChild(data2);
+    tHeadEl.appendChild(row);
   }
 }
 
