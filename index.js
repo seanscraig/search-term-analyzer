@@ -1,11 +1,12 @@
 const uploadForm = document.getElementById("upload-form");
 const csvFile = document.getElementById("csv-file");
 const tableEl = document.getElementById("table");
+const chartEl = document.getElementById("myChart");
 const noHitsObj = {};
 const hitsObj = {};
 
 function csvToArray(str) {
-  const delimiter = ","
+  const delimiter = ",";
   // slice from start of text to the first \n index
   // use split to create an array from string to delimiter
   const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
@@ -55,10 +56,6 @@ function getWordCount(array) {
 }
 
 function displayTable(data) {
-  console.log(data);
-  
-  // console.log(Object.entries(data).map(([key, value]) => key + ":" + value));
-
   let tHeadEl = tableEl.createTHead();
   let th1 = document.createElement("th");
   let th1Text = document.createTextNode("Query");
@@ -84,11 +81,39 @@ function displayTable(data) {
   }
 }
 
+function displayChart(data) {
+  console.log(data);
+
+  const queries = [];
+  const counts = [];
+  for (const value in data) {
+    queries.push(value)
+    counts.push(data[value].counts);
+  }
+
+  // console.log(queries);
+  // console.log(counts);
+
+  const myChart = new Chart(chartEl, {
+    type: "bar",
+    data: {
+      labels: queries,
+      datasets: [
+        {
+          label: "Search Queries",
+          data: counts,
+        },
+      ],
+    },
+    options: {
+      indexAxis: "y"
+    }
+  });
+}
+
 uploadForm.addEventListener("submit", function (event) {
   // prevents the default behavior of the page refreshing
   event.preventDefault();
-
-  console.log("File uploaded");
 
   const input = csvFile.files[0];
 
@@ -99,11 +124,9 @@ uploadForm.addEventListener("submit", function (event) {
   reader.onload = function (event) {
     const text = event.target.result;
     const data = csvToArray(text);
-    //document.write(JSON.stringify(data));
-    // console.log(Object.keys(data));
     getWordCount(data);
     displayTable(noHitsObj);
-    console.log(hitsObj);
+    displayChart(hitsObj);
   };
 
   reader.readAsText(input);
