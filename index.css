@@ -1,3 +1,38 @@
-table, th, td {
+body {
+  font-family: brandon-grotesque;
+}
+
+table {
+  border-collapse: collapse; 
+  padding: 0.5rem;
+}
+
+th, td {
+  padding: 0.5rem;
   border: 1px solid black;
+  text-align: left;
+}
+
+#upload-form {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+#csv-file {
+  padding: 5px;
+  cursor: pointer;
+}
+
+#submit{
+  background: #258834;
+  color: #fff;
+  border: 0;
+  padding: 8px;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+.data-wrapper{
+  display: flex;
 }

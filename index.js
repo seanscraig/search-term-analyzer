@@ -1,7 +1,7 @@
 const uploadForm = document.getElementById("upload-form");
 const csvFile = document.getElementById("csv-file");
-const tableEl = document.getElementById("table");
-const chartEl = document.getElementById("myChart");
+const tableEl = document.getElementById("zero-table");
+const chartEl = document.getElementById("query-chart");
 const noHitsObj = {};
 const hitsObj = {};
 
@@ -21,8 +21,15 @@ function csvToArray(str) {
   // object properties derived from headers (values)
   // the object passed as an element of the array
   const resultsArray = rows.map(function (row) {
+    // console.log(`row: ${row}`);
     const values = row.split(delimiter);
+    // console.log(`values: ${values}`);
     const element = headers.reduce(function (object, header, index) {
+      // console.log(`header: ${header}`);
+      // console.log(`values[index]: ${values[index]}`);
+      if (values[index] === '"') {
+        console.log("true");
+      }
       object[header] = values[index];
       return object;
     }, {});
@@ -61,7 +68,11 @@ function displayTable(data) {
   let th1Text = document.createTextNode("Query");
   let th2 = document.createElement("th");
   let th2Text = document.createTextNode("Counts");
+  let captionEl = document.createElement("caption");
+  let captionText = document.createTextNode("Table for Zero Hits");
 
+  captionEl.appendChild(captionText);
+  tableEl.appendChild(captionEl);
   th1.appendChild(th1Text);
   th2.appendChild(th2Text);
   tHeadEl.appendChild(th1);
@@ -87,12 +98,9 @@ function displayChart(data) {
   const queries = [];
   const counts = [];
   for (const value in data) {
-    queries.push(value)
+    queries.push(value);
     counts.push(data[value].counts);
   }
-
-  // console.log(queries);
-  // console.log(counts);
 
   const myChart = new Chart(chartEl, {
     type: "bar",
@@ -102,17 +110,24 @@ function displayChart(data) {
         {
           label: "Search Queries",
           data: counts,
+          backgroundColor: [
+            "#258834"
+            // "rgba(255, 99, 132, 0.2)",
+            // "rgba(54, 162, 235, 0.2)",
+            // "rgba(255, 206, 86, 0.2)",
+            // "rgba(75, 192, 192, 0.2)",
+            // "rgba(153, 102, 255, 0.2)"
+          ],
         },
       ],
     },
     options: {
-      indexAxis: "y"
-    }
+      indexAxis: "y",
+    },
   });
 }
 
 uploadForm.addEventListener("submit", function (event) {
-  // prevents the default behavior of the page refreshing
   event.preventDefault();
 
   const input = csvFile.files[0];
@@ -124,6 +139,7 @@ uploadForm.addEventListener("submit", function (event) {
   reader.onload = function (event) {
     const text = event.target.result;
     const data = csvToArray(text);
+    console.log(data);
     getWordCount(data);
     displayTable(noHitsObj);
     displayChart(hitsObj);
