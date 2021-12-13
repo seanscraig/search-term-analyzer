@@ -4,15 +4,19 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="https://use.typekit.net/zpp3ysp.css">
+    <link rel="stylesheet" href="https://use.typekit.net/zpp3ysp.css" />
     <link rel="stylesheet" href="./index.css" />
     <title>Search Term Analyzer</title>
   </head>
   <body>
-      <form id="upload-form">
-        <input type="file" id="csv-file" accept=".csv" />
-        <input id="submit" type="submit" value="Submit" />
-      </form>
+    <div class="form-wrapper">
+      <label id="csv-label">CSV File Input
+        <form id="upload-form">
+          <input type="file" id="csv-file" accept=".csv" />
+          <input id="submit" type="submit" value="Submit" />
+        </form>
+      </label>
+    </div>
     <div>
       <div class="data-wrapper">
         <table id="zero-table"></table>

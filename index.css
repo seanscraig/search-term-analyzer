@@ -13,11 +13,21 @@ th, td {
   text-align: left;
 }
 
-#upload-form {
+.form-wrapper {
   padding: 1rem;
   display: flex;
   justify-content: center;
 }
+
+#csv-label{
+  text-align: center;
+}
+
+/* #upload-form {
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+} */
 
 #csv-file {
   padding: 5px;
