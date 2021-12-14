@@ -5,6 +5,8 @@
 ## Description
 This is a website that allows the user to upload a CSV document with search history data and tallies the number of searches and displays the data in two ways. One way is a table for the queries that had no results and a chart for the queries that had results.
 
+![Input field at the top of the page with a submit button, a table to the right side of the page and a chart to the left side of the page](/assets/search-term-analyzer-screen-shot.png)
+
 [Here is a link to the live version of the project](https://seancraig.me/search-term-analyzer/)
 
 ## Table of Contents
