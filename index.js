@@ -16,23 +16,19 @@ function csvToArray(str) {
   const rows = str.slice(str.indexOf("\n") + 1).split("\n");
 
   // Map the rows
-  // split values from each row into array
-  // use headers.reduce to create object
-  // object properties derived from headers (values)
-  // the object passed as an element of the array
   const resultsArray = rows.map(function (row) {
-    // console.log(`row: ${row}`);
+    // split values from each row into array
     const values = row.split(delimiter);
-    // console.log(`values: ${values}`);
+    // use headers.reduce to create object
     const element = headers.reduce(function (object, header, index) {
-      // console.log(`header: ${header}`);
-      // console.log(`values[index]: ${values[index]}`);
       if (values[index] === '"') {
         console.log("true");
       }
+      // object properties derived from headers (values)
       object[header] = values[index];
       return object;
     }, {});
+    // the object passed as an element of the array
     return element;
   });
   return resultsArray;
@@ -40,15 +36,19 @@ function csvToArray(str) {
 
 function getWordCount(array) {
   for (const query of array) {
+    // if there are no hits then add it to the noHitsObj
     if (query.hits === "0") {
+      // if the query is already in the object then add to the counts
       if (noHitsObj.hasOwnProperty(query.query)) {
         noHitsObj[query.query].counts++;
+      // else the query is not in the object add it and set the counts to 1
       } else {
         noHitsObj[query.query] = {
           counts: 1,
           hits: query.hits,
         };
       }
+    // else there are hits then add it to the hitsObj  
     } else {
       if (hitsObj.hasOwnProperty(query.query)) {
         hitsObj[query.query].counts++;
@@ -97,12 +97,13 @@ function displayChart(data) {
 
   const queries = [];
   const counts = [];
+
   for (const value in data) {
     queries.push(value);
     counts.push(data[value].counts);
   }
 
-  const myChart = new Chart(chartEl, {
+  new Chart(chartEl, {
     type: "bar",
     data: {
       labels: queries,
@@ -110,14 +111,7 @@ function displayChart(data) {
         {
           label: "Search Queries",
           data: counts,
-          backgroundColor: [
-            "#258834"
-            // "rgba(255, 99, 132, 0.2)",
-            // "rgba(54, 162, 235, 0.2)",
-            // "rgba(255, 206, 86, 0.2)",
-            // "rgba(75, 192, 192, 0.2)",
-            // "rgba(153, 102, 255, 0.2)"
-          ],
+          backgroundColor: ["#258834"],
         },
       ],
     },

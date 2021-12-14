@@ -5,6 +5,7 @@ body {
 table {
   border-collapse: collapse; 
   padding: 0.5rem;
+  /* margin-left: 2rem; */
 }
 
 th, td {
@@ -45,4 +46,14 @@ th, td {
 
 .data-wrapper{
   display: flex;
+  max-width: 88%;
+  max-height: 100%;
+  /* margin-right: auto; */
+  margin-left: 1rem;
+}
+
+@media screen and (min-width: 320px) and (max-width:768px) {
+  .data-wrapper {
+    display: inline;
+  }
 }
