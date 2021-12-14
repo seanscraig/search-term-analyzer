@@ -5,7 +5,6 @@ body {
 table {
   border-collapse: collapse; 
   padding: 0.5rem;
-  /* margin-left: 2rem; */
 }
 
 th, td {
@@ -23,12 +22,6 @@ th, td {
 #csv-label{
   text-align: center;
 }
-
-/* #upload-form {
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-} */
 
 #csv-file {
   padding: 5px;
@@ -48,7 +41,6 @@ th, td {
   display: flex;
   max-width: 88%;
   max-height: 100%;
-  /* margin-right: auto; */
   margin-left: 1rem;
 }
 
