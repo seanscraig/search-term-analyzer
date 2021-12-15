@@ -22,7 +22,7 @@ function csvToArray(str) {
     // use headers.reduce to create object
     const element = headers.reduce(function (object, header, index) {
       if (values[index] === '"') {
-        console.log("true");
+        console.log(`true: ${values[index]}`);
       }
       // object properties derived from headers (values)
       object[header] = values[index];
@@ -31,6 +31,7 @@ function csvToArray(str) {
     // the object passed as an element of the array
     return element;
   });
+
   return resultsArray;
 }
 
@@ -41,14 +42,15 @@ function getWordCount(array) {
       // if the query is already in the object then add to the counts
       if (noHitsObj.hasOwnProperty(query.query)) {
         noHitsObj[query.query].counts++;
-      // else the query is not in the object add it and set the counts to 1
+        // else the query is not in the object add it and set the counts to 1
       } else {
         noHitsObj[query.query] = {
           counts: 1,
           hits: query.hits,
+          query: query.query
         };
       }
-    // else there are hits then add it to the hitsObj  
+      // else there are hits then add it to the hitsObj
     } else {
       if (hitsObj.hasOwnProperty(query.query)) {
         hitsObj[query.query].counts++;
@@ -56,10 +58,27 @@ function getWordCount(array) {
         hitsObj[query.query] = {
           counts: 1,
           hits: query.hits,
+          query: query.query
         };
       }
     }
   }
+}
+
+function sortData(dataObj) {
+  const valuesArrToItr = Object.values(dataObj)
+
+  valuesArrToItr.sort(function(a, b) {
+    if (a["counts"] < b["counts"]) {
+      return 1;
+    } else if (a["counts"] > b["counts"]) {
+      return -1;
+    } else {
+      return 0
+    }
+  })
+
+  return valuesArrToItr;
 }
 
 function displayTable(data) {
@@ -82,7 +101,7 @@ function displayTable(data) {
     let row = tableEl.insertRow();
     let data1 = document.createElement("td");
     let data2 = document.createElement("td");
-    let query = document.createTextNode(value);
+    let query = document.createTextNode(data[value].query);
     let counts = document.createTextNode(data[value].counts);
     data1.appendChild(query);
     data2.appendChild(counts);
@@ -93,13 +112,13 @@ function displayTable(data) {
 }
 
 function displayChart(data) {
-  console.log(data);
+  // console.log(data);
 
   const queries = [];
   const counts = [];
 
   for (const value in data) {
-    queries.push(value);
+    queries.push(data[value].query);
     counts.push(data[value].counts);
   }
 
@@ -133,10 +152,11 @@ uploadForm.addEventListener("submit", function (event) {
   reader.onload = function (event) {
     const text = event.target.result;
     const data = csvToArray(text);
-    console.log(data);
     getWordCount(data);
-    displayTable(noHitsObj);
-    displayChart(hitsObj);
+    const noHitsSortedData = sortData(noHitsObj);
+    const hitsSortedData = sortData(hitsObj);
+    displayTable(noHitsSortedData);
+    displayChart(hitsSortedData);
   };
 
   reader.readAsText(input);
