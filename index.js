@@ -6,59 +6,78 @@ const noHitsObj = {};
 const hitsObj = {};
 
 function csvToArray(str) {
+  //
   const delimiter = ",";
+
+  // this first array will contain the property keys from the first line of the file
   // slice from start of text to the first \n index
   // use split to create an array from string to delimiter
   const headers = str.slice(0, str.indexOf("\n")).split(delimiter);
+  console.log(headers);
 
+  // this second array will contain the values
   // slice from /n index + 1 to the end of the text
   // use split to create an array of each csv value row
   const rows = str.slice(str.indexOf("\n") + 1).split("\n");
 
   // Map the rows
-  const resultsArray = rows.map(function (row) {
-    // split values from each row into array
-    const values = row.split(delimiter);
-    // use headers.reduce to create object
-    const element = headers.reduce(function (object, header, index) {
-      if (values[index] === '"') {
-        console.log(`true: ${values[index]}`);
-      }
-      // object properties derived from headers (values)
-      object[header] = values[index];
-      return object;
-    }, {});
-    // the object passed as an element of the array
-    return element;
-  });
+  const resultsArray = rows.map((line) => {
 
+    //
+    const eachGroup = line.split(delimiter);
+    // console.log(eachGroup);
+    //
+    if (line.includes('"')) {
+      const extractQuote = line
+        .match(/(?:"[^"]*"|^[^"]*$)/)[0]
+        .replace(/"/g, "");
+
+      return {
+        [headers[0]]: eachGroup[0],
+        [headers[1]]: extractQuote,
+        [headers[2]]: eachGroup[3],
+        [headers[3]]: eachGroup[4],
+        [headers[4]]: eachGroup[5],
+        [headers[5]]: eachGroup[6],
+      };
+    } else {
+      const element = headers.reduce(function (object, header, index) {
+        // object properties derived from headers (values)
+        object[header] = eachGroup[index];
+        console.log(index);
+        return object;
+      }, {});
+      return element;
+    }
+  });
+  console.log(resultsArray);
   return resultsArray;
 }
 
 function getWordCount(array) {
-  for (const query of array) {
+  for (const obj of array) {
     // if there are no hits then add it to the noHitsObj
-    if (query.hits === "0") {
+    if (obj.hits === "0") {
       // if the query is already in the object then add to the counts
-      if (noHitsObj.hasOwnProperty(query.query)) {
-        noHitsObj[query.query].counts++;
+      if (noHitsObj.hasOwnProperty(obj.query)) {
+        noHitsObj[obj.query].counts++;
         // else the query is not in the object add it and set the counts to 1
       } else {
-        noHitsObj[query.query] = {
+        noHitsObj[obj.query] = {
           counts: 1,
-          hits: query.hits,
-          query: query.query
+          hits: obj.hits,
+          query: obj.query,
         };
       }
       // else there are hits then add it to the hitsObj
     } else {
-      if (hitsObj.hasOwnProperty(query.query)) {
-        hitsObj[query.query].counts++;
+      if (hitsObj.hasOwnProperty(obj.query)) {
+        hitsObj[obj.query].counts++;
       } else {
-        hitsObj[query.query] = {
+        hitsObj[obj.query] = {
           counts: 1,
-          hits: query.hits,
-          query: query.query
+          hits: obj.hits,
+          query: obj.query,
         };
       }
     }
@@ -66,17 +85,17 @@ function getWordCount(array) {
 }
 
 function sortData(dataObj) {
-  const valuesArrToItr = Object.values(dataObj)
+  const valuesArrToItr = Object.values(dataObj);
 
-  valuesArrToItr.sort(function(a, b) {
+  valuesArrToItr.sort(function (a, b) {
     if (a["counts"] < b["counts"]) {
       return 1;
     } else if (a["counts"] > b["counts"]) {
       return -1;
     } else {
-      return 0
+      return 0;
     }
-  })
+  });
 
   return valuesArrToItr;
 }
@@ -112,8 +131,6 @@ function displayTable(data) {
 }
 
 function displayChart(data) {
-  // console.log(data);
-
   const queries = [];
   const counts = [];
 
@@ -143,21 +160,34 @@ function displayChart(data) {
 uploadForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
+  // set input equal to the inputted csv file
   const input = csvFile.files[0];
 
-  // create a new instance of FileReader class
+  // create a new instance of FileReader class so the file can be read
   const reader = new FileReader();
 
-  // Once the reading is done
+  // reads the
+  reader.readAsText(input);
+
+  // Once the reading operation is successful
   reader.onload = function (event) {
+    // set text equal to the result of the reading
     const text = event.target.result;
+
+    // set data equal to the returned array of objects from parsing the csv
     const data = csvToArray(text);
+
+    // count the queries and put them into two different objects depending if they have hits or not
     getWordCount(data);
+
+    //
     const noHitsSortedData = sortData(noHitsObj);
     const hitsSortedData = sortData(hitsObj);
+
+    //
     displayTable(noHitsSortedData);
+
+    //
     displayChart(hitsSortedData);
   };
-
-  reader.readAsText(input);
 });
